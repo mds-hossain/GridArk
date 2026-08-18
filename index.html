@@ -19,7 +19,6 @@
   body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;transition:background .2s,color .2s}
   .hidden{display:none!important}
 
-  /* sleek scrollbars */
   *{scrollbar-width:thin;scrollbar-color:color-mix(in srgb,var(--muted) 32%,transparent) transparent}
   ::-webkit-scrollbar{width:7px;height:7px}
   ::-webkit-scrollbar-track{background:transparent}
@@ -29,7 +28,9 @@
   .table-wrap:hover::-webkit-scrollbar-thumb{background:color-mix(in srgb,var(--muted) 40%,transparent);background-clip:padding-box}
 
   header{position:sticky;top:0;z-index:50;background:var(--card);border-bottom:1px solid var(--border);padding:calc(14px*var(--fs)) 28px;display:flex;align-items:center;gap:10px;box-shadow:var(--shadow)}
-  .logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:calc(19px*var(--fs));white-space:nowrap}
+  .logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:calc(19px*var(--fs));white-space:nowrap;border:none;background:none;cursor:pointer;font-family:inherit;color:inherit;padding:0;text-align:left;border-radius:8px}
+  .logo:hover{opacity:.85}
+  .logo:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
   .logo .mark{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,var(--accent),#8b5cf6);display:grid;place-items:center;color:#fff;font-size:17px;flex-shrink:0}
   .logo small{display:block;font-size:calc(11px*var(--fs));font-weight:500;color:var(--muted)}
   header .spacer{flex:1;min-width:4px}
@@ -84,6 +85,11 @@
   .filebar .fname span.tag{font-size:calc(11px*var(--fs));font-weight:600;background:var(--accent-soft);color:var(--accent);padding:3px 9px;border-radius:20px;white-space:nowrap}
   .filebar select{font-family:inherit;font-size:calc(13px*var(--fs));padding:8px 12px;border-radius:9px;border:1px solid var(--border);background:var(--card);color:var(--text)}
   .filebar .spacer{flex:1}
+
+  .vba-banner{display:flex;align-items:center;gap:10px;background:var(--accent-soft);border:1px solid var(--border);border-radius:10px;padding:10px 14px;margin-bottom:20px;font-size:calc(12.5px*var(--fs))}
+  .vba-banner .dot{width:8px;height:8px;border-radius:50%;background:var(--accent);flex-shrink:0}
+  .vba-banner button{margin-left:auto;background:none;border:none;color:var(--muted);cursor:pointer;font-size:14px;padding:4px}
+  .vba-banner button:hover{color:var(--text)}
 
   .kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-bottom:22px}
   .kpi{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px 18px;box-shadow:var(--shadow)}
@@ -164,10 +170,10 @@
 <body>
 
 <header>
-  <div class="logo">
+  <button class="logo" id="logoBtn" title="Back to homepage">
     <div class="mark">▦</div>
     <div>GridArk<small>Instant Excel Dashboard</small></div>
-  </div>
+  </button>
   <div class="spacer"></div>
   <div class="zoom-group">
     <button class="btn icon" id="zoomOut" title="Zoom out">
@@ -216,22 +222,22 @@
 </header>
 
 <main>
-  <input type="file" id="fileInput" accept=".xlsx,.xls,.csv,.tsv" class="hidden">
+  <input type="file" id="fileInput" accept=".xlsx,.xls,.xlsm,.xlsb,.xltx,.xltm,.csv,.tsv,.ods,.fods,.numbers,.xml,.txt,.dif,.slk" class="hidden">
 
   <section id="landing">
     <div class="dropzone" id="dropzone">
       <div class="big">📊</div>
-      <h2>Drop your Excel or CSV file here</h2>
-      <p>.xlsx, .xls or .csv - analyzed instantly, 100% in your browser.<br>Your data never leaves your device.</p>
+      <h2>Drop your spreadsheet file here</h2>
+      <p>Excel, macro-enabled Excel, CSV, ODS, Numbers and more - analyzed in your browser.<br>Your data never leaves your device.</p>
       <div class="actions">
         <button class="btn primary" id="btnChoose">📂 Choose file</button>
         <button class="btn" id="btnSample">✨ Try sample data</button>
       </div>
     </div>
     <div class="features">
+      <div class="feature"><div class="fi">📦</div><h4>Broad format support</h4><p>Open XLSX, XLSM, XLSB, XLS, XLTX, XLTM, CSV, TSV, ODS, FODS, Numbers, XML and more.</p></div>
       <div class="feature"><div class="fi">🧠</div><h4>Auto column detection</h4><p>Recognizes companies, countries, sectors, statuses, dates, ratings, phones, emails &amp; links automatically.</p></div>
-      <div class="feature"><div class="fi">📈</div><h4>Instant charts</h4><p>Distribution bars, status donut, activity timeline and rating histogram - built from whatever your file contains.</p></div>
-      <div class="feature"><div class="fi">🎨</div><h4>Your style</h4><p>8 themes, 11 fonts, font-size control, zoom and fullscreen - the dashboard adapts to you.</p></div>
+      <div class="feature"><div class="fi">📈</div><h4>Instant charts</h4><p>Distribution bars, status donut, activity timeline and rating histogram built from your file.</p></div>
       <div class="feature"><div class="fi">🔗</div><h4>Actionable cells</h4><p>Websites, emails and phone numbers become one-click links. Status values get color-coded pills.</p></div>
     </div>
   </section>
@@ -241,8 +247,16 @@
       <div class="fname">📄 <span id="fileName"></span> <span class="tag" id="rowTag"></span></div>
       <span id="sheetWrap">Sheet: <select id="sheetSelect"></select></span>
       <div class="spacer"></div>
-      <button class="btn" id="btnExport">⬇ Export filtered CSV</button>
+      <button class="btn" id="btnExportCSV">⬇ CSV</button>
+      <button class="btn" id="btnExportXLSX">⬇ XLSX</button>
+      <button class="btn hidden" id="btnExportXLSM">⬇ XLSM + macros</button>
       <button class="btn" id="btnNew">↺ New file</button>
+    </div>
+
+    <div class="vba-banner hidden" id="vbaBanner">
+      <span class="dot"></span>
+      <span>⚠️ This workbook contains VBA macros. They are preserved on XLSM export but never run here.</span>
+      <button id="vbaClose" title="Dismiss">✕</button>
     </div>
 
     <div class="kpi-grid" id="kpiGrid"></div>
@@ -409,7 +423,7 @@ function readFile(file){
   const reader = new FileReader();
   reader.onload = e => {
     try{
-      const wb = XLSX.read(new Uint8Array(e.target.result), {type:'array', cellDates:true});
+      const wb = XLSX.read(new Uint8Array(e.target.result), {type:'array', cellDates:true, bookVBA:true});
       state.workbook = wb; state.sheetNames = wb.SheetNames; state.fileName = file.name;
       loadSheet(wb.SheetNames[0]);
     }catch(err){ alert('Could not read this file: ' + err.message); }
@@ -468,6 +482,13 @@ function analyze(){
   });
 }
 
+function wb_has_macro(wb){ return !!(wb && wb.vbaraw); }
+function updateMacroUI(){
+  const has = wb_has_macro(state.workbook);
+  $('#vbaBanner').classList.toggle('hidden', !has);
+  $('#btnExportXLSM').classList.toggle('hidden', !has);
+}
+
 function buildDashboard(){
   $('#landing').classList.add('hidden');
   $('#dashboard').classList.remove('hidden');
@@ -479,6 +500,7 @@ function buildDashboard(){
   state.filters = {}; state.search = ''; state.page = 1; state.sort = {ci:null, dir:1};
   $('#searchInput').value = '';
   buildFilters();
+  updateMacroUI();
   refresh();
 }
 
@@ -682,6 +704,23 @@ function exportCSV(){
   a.click(); URL.revokeObjectURL(a.href);
 }
 
+function buildFilteredWorkbook(){
+  const data = [state.headers, ...filteredRows().map(r => state.meta.map(m => r[m.ci]))];
+  const ws = XLSX.utils.aoa_to_sheet(data);
+  return {SheetNames:['Filtered'], Sheets:{Filtered:ws}};
+}
+function exportXLSX(){
+  const wb = buildFilteredWorkbook();
+  const name = state.fileName.replace(/\.\w+$/,'') + '-filtered.xlsx';
+  XLSX.writeFile(wb, name, {bookType:'xlsx'});
+}
+function exportXLSM(){
+  const wb = buildFilteredWorkbook();
+  if(state.workbook && state.workbook.vbaraw) wb.vbaraw = state.workbook.vbaraw;
+  const name = state.fileName.replace(/\.\w+$/,'') + '-filtered.xlsm';
+  XLSX.writeFile(wb, name, {bookType:'xlsm', bookVBA:true});
+}
+
 function loadSample(){
   const aoa = [
     ['Company / Firma','Country / Land','Address','Target Sector / Zielbranche','Ansprechpartner','Telefon','E-Mail','Website','datum Anruf','datum Email','Aktueller Status','Products and Info'],
@@ -713,16 +752,21 @@ $('#btnUploadTop').addEventListener('click', () => $('#fileInput').click());
 $('#btnSample').addEventListener('click', e => { e.stopPropagation(); loadSample(); });
 $('#dropzone').addEventListener('click', () => $('#fileInput').click());
 $('#fileInput').addEventListener('change', e => { if(e.target.files[0]) readFile(e.target.files[0]); e.target.value=''; });
-['dragover','dragenter'].forEach(ev => $('#dropzone').addEventListener(ev, e => { e.preventDefault(); $('#dropzone').classList.add('dragover'); }));
-['dragleave','drop'].forEach(ev => $('#dropzone').addEventListener(ev, e => { e.preventDefault(); $('#dropzone').classList.remove('dragover'); }));
-$('#dropzone').addEventListener('drop', e => { const f = e.dataTransfer.files[0]; if(f) readFile(f); });
 $('#sheetSelect').addEventListener('change', e => loadSheet(e.target.value));
 $('#searchInput').addEventListener('input', e => { state.search = e.target.value; state.page = 1; refresh(); });
 $('#pageSize').addEventListener('change', e => { state.pageSize = +e.target.value; state.page = 1; renderTable(filteredRows()); });
 $('#btnPrev').addEventListener('click', () => { state.page--; renderTable(filteredRows()); });
 $('#btnNext').addEventListener('click', () => { state.page++; renderTable(filteredRows()); });
-$('#btnExport').addEventListener('click', exportCSV);
+$('#btnExportCSV').addEventListener('click', exportCSV);
+$('#btnExportXLSX').addEventListener('click', exportXLSX);
+$('#btnExportXLSM').addEventListener('click', exportXLSM);
 $('#btnNew').addEventListener('click', () => { $('#dashboard').classList.add('hidden'); $('#landing').classList.remove('hidden'); });
+$('#logoBtn').addEventListener('click', () => {
+  $('#dashboard').classList.add('hidden');
+  $('#landing').classList.remove('hidden');
+  window.scrollTo({top:0, behavior:'smooth'});
+});
+$('#vbaClose').addEventListener('click', () => $('#vbaBanner').classList.add('hidden'));
 
 const SVG_FS_IN  = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>';
 const SVG_FS_OUT = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 14 10 14 10 20"/><polyline points="20 10 14 10 14 4"/><line x1="14" y1="10" x2="21" y2="3"/><line x1="3" y1="21" x2="10" y2="14"/></svg>';

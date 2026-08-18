@@ -18,6 +18,11 @@ No backend. No upload. No tracking. Your data never leaves your device.
 
 ## ✨ Features
 
+### 📦 Broad format support & VBA macro preservation
+Open **XLSX, XLSM, XLSB, XLS, XLTX, XLTM, CSV, TSV, ODS, FODS, Numbers, XML, TXT, DIF** and **SLK** files.
+
+Macro-enabled workbooks (`.xlsm`, `.xltm`, `.xlsb`) are read with the raw VBA project attached (`bookVBA`). GridArk shows a banner when macros are detected and can export filtered data back to `.xlsm` with the macro blob preserved. Macros are never executed in the browser.
+
 ### 🧠 Smart column detection
 GridArk analyzes your file and automatically recognizes:
 
@@ -31,13 +36,13 @@ GridArk analyzes your file and automatically recognizes:
 | **Emails** | `name@domain.tld` | `mailto:` links + coverage KPI |
 | **Phones** | International formats | `tel:` links + coverage KPI |
 
-Works with **any** `.xlsx`, `.xls` or `.csv` - lead lists, CRM exports, inventory, finance trackers, survey results. If your file structure changes, GridArk adapts automatically.
+Works with lead lists, CRM exports, inventory, finance trackers, survey results and more. If your file structure changes, GridArk adapts automatically.
 
 ### 📊 Auto-generated dashboard
 - **KPI cards** - totals, top status, positive-reply rate, unique counts, averages, contact-data coverage
 - **Charts** - status donut, category distributions, date timeline, numeric histogram (Chart.js)
 - **Data table** - global search, per-column filters, click-to-sort headers, pagination (25/50/100), sticky header, sleek minimal scrollbars
-- **Export** - download your filtered view back as CSV
+- **Export** - download your filtered view as CSV, XLSX or macro-preserving XLSM
 - **Multi-sheet** - picker appears automatically for workbooks with several sheets
 
 ### 🎨 Make it yours (⚙️ settings panel)
@@ -49,6 +54,7 @@ Works with **any** `.xlsx`, `.xls` or `.csv` - lead lists, CRM exports, inventor
 ### 🔍 Comfort tools
 - **Zoom** 50 % to 150 % (magnifier controls in header, click % to reset)
 - **Fullscreen mode** - expands the layout to the whole screen; wide tables breathe
+- **Logo click** - returns to the homepage from anywhere
 - **Persistent preferences** - theme, font, size & zoom are saved locally
 - **Mobile responsive** - compact one-line header, icon-only buttons, full-width settings sheet
 
@@ -57,13 +63,13 @@ Works with **any** `.xlsx`, `.xls` or `.csv` - lead lists, CRM exports, inventor
 ## 🚀 How to use
 
 1. **Open** `index.html` in any modern browser (or visit the [live demo](https://mds-hossain.github.io/gridark/)).
-2. **Drop** your Excel/CSV file onto the dropzone - or click **📂 Choose file** / **✨ Try sample data**.
+2. **Drop** your spreadsheet file onto the dropzone - or click **📂 Choose file** / **✨ Try sample data**.
 3. **Explore**:
    - Read KPIs & charts at a glance
    - Use dropdown filters + the search box to slice data - everything updates live
    - Click any column header to sort
    - Click website / email / phone cells to act on them
-4. **Export** the filtered result as CSV when done.
+4. **Export** the filtered result as CSV, XLSX or macro-preserving XLSM when done.
 
 > 💡 First load needs internet (Chart.js, SheetJS & fonts load from CDN). Everything after that runs locally.
 
@@ -72,16 +78,19 @@ Works with **any** `.xlsx`, `.xls` or `.csv` - lead lists, CRM exports, inventor
 ## ⚙️ How it works
 
 ```
-your-file.xlsx
+your-file.xlsm
       |
       v
-SheetJS (in-browser parser) --> rows + headers
+SheetJS (in-browser parser, bookVBA) --> rows + headers + vbaraw
       |
       v
 Column profiler --> type heuristics (url / email / phone / date / number / category / text)
       |             + name hints (status, country, sector, rating, company...)
       v
 Dashboard engine --> KPIs + Chart.js visualizations + filterable/sortable table
+      |
+      v
+Export --> CSV / XLSX / XLSM (vbaraw reattached, macros preserved)
 ```
 
 - **Single file** - the whole app is one self-contained `index.html` (HTML + CSS + vanilla JS). No build step, no framework, no server.
@@ -106,6 +115,7 @@ It also works on Netlify, Vercel, Cloudflare Pages - or just by double-clicking 
 GridArk is **100% client-side**:
 
 - Files are parsed in your browser with the FileReader API
+- VBA macros are preserved as inert data and never executed
 - No server, no database, no analytics, no cookies
 - Preferences are stored only in your browser's `localStorage`
 - Safe for confidential lead lists, financial data and internal exports
